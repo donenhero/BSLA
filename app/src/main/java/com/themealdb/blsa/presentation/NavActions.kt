@@ -9,6 +9,7 @@ class NavActions (private val navController: NavController) {
     companion object {
         //Screens
         const val MAIN_LIST_VIEW = "MAIN_LIST_COMPOSE_VIEW"
+        const val SEARCH_VIEW = "SEARCH_COMPOSE_VIEW"
         const val MEAL_DETAIL_VIEW = "MEAL_DETAIL_COMPOSE_VIEW"
         //Args
         const val MEAL_ID_ARG = "MEAL_ID_ARG"
@@ -16,8 +17,11 @@ class NavActions (private val navController: NavController) {
         const val MEAL_DETAIL_ROUTE = "$MEAL_DETAIL_VIEW?$MEAL_ID_ARG={$MEAL_ID_ARG}"
     }
 
-    fun navigateToDetail(videoTitle: String) {
-        navController.navigate("$MEAL_DETAIL_VIEW?$MEAL_ID_ARG=$videoTitle")
+    fun navigateToDetail(mealId: String) {
+        navController.navigate("$MEAL_DETAIL_VIEW?$MEAL_ID_ARG=$mealId")
+    }
+    fun navigateToSearch() {
+        navController.navigate(SEARCH_VIEW)
     }
     fun popBackStack(){
         navController.popBackStack()

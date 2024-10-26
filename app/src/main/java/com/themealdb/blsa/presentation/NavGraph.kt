@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.themealdb.blsa.presentation.mainList.MainListScreen
 import com.themealdb.blsa.presentation.mealDetail.MealDetailScreen
+import com.themealdb.blsa.presentation.search.SearchScreen
 
 @Composable
 fun NavGraph(
@@ -29,6 +30,10 @@ fun NavGraph(
     ) {
         composable(NavActions.MAIN_LIST_VIEW) {
             MainListScreen(navActions)
+        }
+
+        composable(NavActions.SEARCH_VIEW) {
+            SearchScreen(navActions)
         }
 
         composable(

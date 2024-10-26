@@ -27,12 +27,13 @@ object SpecialtyViews {
 
     @Composable
     fun Header(strHeader:String,
+               resIcon:Int = R.drawable.ic_back,
                resTInt:Int = R.color.colorB,
                backEvent:()->Unit = {})
     {
         Box(contentAlignment = Alignment.CenterStart){
             Pic.IconClickable(
-                resIcon = R.drawable.ic_back,
+                resIcon = resIcon,
                 modifier = Modifier
                     .padding(StyleGuide.sdp5())
                     .size(dimensionResource(id = R.dimen._30sdp)),

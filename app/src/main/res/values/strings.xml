@@ -2,6 +2,7 @@
     <string name="app_name">Meals!</string>
     <string name="meal_list_title">Meals</string>
     <string name="retry">Retry</string>
+    <string name="search">Search</string>
     <string name="internet_connection_error">Connection Error:Please check your internet connection and try again</string>
     <string name="server_error">Server Error:Please try again later</string>
 </resources>

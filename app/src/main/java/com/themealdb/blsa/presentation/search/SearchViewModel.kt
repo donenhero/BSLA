@@ -1,5 +1,9 @@
-package com.themealdb.blsa.presentation.mainList
+package com.themealdb.blsa.presentation.search
 
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModel
 import com.themealdb.blsa.data.local.MealDao
 import com.themealdb.blsa.domain.model.MealListResult
@@ -14,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainListViewModel@Inject constructor(
+class SearchViewModel@Inject constructor(
     private val mealListResponseUseCase: GetMealListResponseUseCase,
     private val mealDao: MealDao
 ) : ViewModel() {
@@ -22,37 +26,44 @@ class MainListViewModel@Inject constructor(
     val mealListFlowData = MutableStateFlow(Resource.loading<MealListResult>())
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    init {
-        getMealListFlowData()
-    }
 
-    fun getMealListFlowData(){
+    fun getMealListFlowData(strSearch: String){
         mealListFlowData.value = Resource.loading()
         coroutineScope.launch {
             try {
-                val mealListResult = mealListResponseUseCase.invoke("")
+                val mealListResult = mealListResponseUseCase.invoke(strSearch)
                 if (mealListResult.meals.isNullOrEmpty())
-                    getMealFlowDataOffline(Exception("Not Found"))
+                    getMealFlowDataOffline(Exception("Not Found"),strSearch)
                 else {
                     mealDao.insert(mealListResult.meals ?: ArrayList())
                     mealListFlowData.value = Resource.success(mealListResult)
                 }
             } catch (exception: Exception) {
-                getMealFlowDataOffline(exception)
+                getMealFlowDataOffline(exception,strSearch)
             }
         }
     }
 
-    fun getMealFlowDataOffline(exception: Exception){
+    fun getMealFlowDataOffline(exception: Exception,strSearch: String){
         coroutineScope.launch {
             val mealListResult = MealListResult(ArrayList())
-            mealListResult.meals = mealDao.getAll()
+            mealListResult.meals = mealDao.searchAll(strSearch)
             if(mealListResult.meals.isNullOrEmpty()){
                 mealListFlowData.value = Resource.error(null, exception.message ?: "Server Error")
             }
             else
                 mealListFlowData.value = Resource.success(mealListResult)
         }
+    }
+
+
+    fun hideInputKeyboard(context: Context) {
+        val imm: InputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        var view: View? = (context as Activity).currentFocus
+        if (view == null) {
+            view = View(context)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 

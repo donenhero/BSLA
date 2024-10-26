@@ -6,4 +6,7 @@
     <color name="colorAccent">#168581</color>
     <color name="colorB">#25254A</color>
     <color name="colorGray">#777777</color>
+
+    <color name="colorBLight">#7C7C93</color>
+    <color name="red">#F0506D</color>
 </resources>

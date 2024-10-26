@@ -15,6 +15,9 @@ interface MealDao {
     @Query("SELECT * FROM meals")
     suspend fun getAll(): List<MealItem>
 
+    @Query("SELECT * FROM meals  WHERE  str_meal LIKE '%' || :searchStr || '%'")
+    suspend fun searchAll(searchStr:String): List<MealItem>
+
     @Query("SELECT * FROM meals WHERE id = :pId")
     suspend fun getById(pId: String): MealItem?
 

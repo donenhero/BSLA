@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,12 +56,27 @@ fun MainListScreen(
         Modifier.background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Label.TextBold(
-            resText = R.string.meal_list_title,
-            modifier = Modifier.fillMaxWidth(),
-            resPaddingV = R.dimen._10sdp,
-            resTextColor = R.color.colorB,
-            textAlign = TextAlign.Center)
+
+        Box(contentAlignment = Alignment.CenterEnd){
+            //Search icon
+            Pic.IconClickable(
+                resIcon = R.drawable.search,
+                modifier = Modifier
+                    .padding(StyleGuide.sdp15(),StyleGuide.sdp10())
+                    .size(dimensionResource(id = R.dimen._20sdp)),
+                tInt = colorResource(R.color.colorB)
+            ){
+                navActions.navigateToSearch()
+            }
+
+            Label.TextBold(
+                resText = R.string.meal_list_title,
+                modifier = Modifier.fillMaxWidth(),
+                resSize = R.dimen._12sdp,
+                resTextColor = R.color.colorB,
+                resPaddingV = R.dimen._5sdp,
+                textAlign = TextAlign.Center)
+        }
 
         // ایجاد یک آبسرور که حالات مربوط به ارسال درخواست لیست دستورپخت در آن قرار میگیرد
         val requestMealList = viewModel.mealListFlowData.collectAsState().value
@@ -67,10 +84,9 @@ fun MainListScreen(
         when (requestMealList.status) {
             Status.SUCCESS -> SuccessView(mealList = requestMealList.data!!, navActions)
             Status.LOADING -> LoadingView()
-            Status.ERROR -> ErrorView(
-                strError = requestMealList.message ?: "",
-                viewModel = viewModel
-            )
+            Status.ERROR -> ErrorView(strError = requestMealList.message ?: ""){
+                viewModel.getMealListFlowData()
+            }
         }
 
     }
@@ -93,7 +109,7 @@ fun SuccessView(mealList: MealListResult, navActions: NavActions){
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(0.dp, 0.dp, 0.dp, dimensionResource(id = R.dimen._100sdp) ),content = {
             items(mealList.meals!!.size) {
-                VideoItemView(item = mealList.meals!![it],navActions)
+                MealItemView(item = mealList.meals!![it],navActions)
             }
         })
 }
@@ -105,7 +121,7 @@ fun SuccessView(mealList: MealListResult, navActions: NavActions){
  */
 
 @Composable
-fun VideoItemView(item: MealItem, navActions: NavActions)
+fun MealItemView(item: MealItem, navActions: NavActions)
 {
     SpecialtyViews.CardViewWrap(dpBasePadding = StyleGuide.sdp4()){
         Row(
@@ -200,7 +216,7 @@ fun LoadingView()
  *در صورتی که به هر دلیلی دریافت اطلاعات لیست دستورپختئ ها با مشکل مواجه شود این صفحه نمایش داده میشود
  */
 @Composable
-fun ErrorView(strError:String,viewModel: MainListViewModel)
+fun ErrorView(strError:String,eventRetry:()->Unit)
 {
     Column(
         Modifier.fillMaxSize(),
@@ -217,7 +233,7 @@ fun ErrorView(strError:String,viewModel: MainListViewModel)
             resBackColor = R.color.colorAccent,
             resMarginTop =  R.dimen._10sdp){
 
-            viewModel.getMealListFlowData()
+            eventRetry()
         }
     }
 }
