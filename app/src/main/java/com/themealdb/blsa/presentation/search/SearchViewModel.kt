@@ -14,7 +14,9 @@ import com.themealdb.blsa.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,9 +32,13 @@ class SearchViewModel@Inject constructor(
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
 
+    var job:Job? = null
     fun getMealListFlowData(strSearch: String){
         mealListFlowData.value = Resource.loading()
-        coroutineScope.launch {
+        if (job != null)
+            job?.cancel()
+        job = coroutineScope.launch {
+            delay(1000L)
             try {
                 val mealListResult = mealListResponseUseCase.invoke(strSearch)
                 if (mealListResult.meals.isNullOrEmpty())
@@ -48,7 +54,7 @@ class SearchViewModel@Inject constructor(
     }
 
     private fun getMealFlowDataOffline(exception: Exception, strSearch: String){
-        coroutineScope.launch {
+        job = coroutineScope.launch {
             val mealListResult = MealListResult(ArrayList())
             mealListResult.meals = mealDao.searchAll(strSearch)
             if(mealListResult.meals.isNullOrEmpty()){

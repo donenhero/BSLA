@@ -3,6 +3,7 @@ package com.themealdb.blsa
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.themealdb.blsa.data.local.MealDao
+import com.themealdb.blsa.data.local.MySharedPref
 import com.themealdb.blsa.domain.model.MealListResult
 import com.themealdb.blsa.domain.useCase.GetMealListResponseUseCase
 import com.themealdb.blsa.presentation.mainList.MainListViewModel
@@ -41,6 +42,8 @@ class MainListUnitTest {
     private lateinit var useCase: GetMealListResponseUseCase
     @Mock
     private lateinit var mealDao: MealDao
+    @Mock
+    private lateinit var sharedPref: MySharedPref
     private val testDispatcher = StandardTestDispatcher()
 
 
@@ -51,7 +54,7 @@ class MainListUnitTest {
         Dispatchers.setMain(testDispatcher)
 
         context = mock(Context::class.java)
-        viewModel = MainListViewModel(useCase,mealDao)
+        viewModel = MainListViewModel(useCase,mealDao,sharedPref)
     }
 
     /**
