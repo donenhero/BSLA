@@ -41,7 +41,7 @@ fun MealDetailScreen(navActions: NavActions,
     Column{
         val item = viewModel.mealListFlowData.collectAsState().value
 
-        SpecialtyViews.Header(item.strMeal){
+        SpecialtyViews.Header(item.strMeal, sharedInterface =  viewModel, mealId = mealId){
             navActions.popBackStack()
         }
         Column(
@@ -134,7 +134,7 @@ fun IngredientView(name:String,measure:String){
             strContent = measure,
             resSize = R.dimen._11sdp,
             resTextColor = R.color.colorAccent,
-            resPaddingH = R.dimen._1sdp,
+            resPaddingH = R.dimen._5sdp,
             resPaddingV = R.dimen._1sdp,
             textAlign = TextAlign.Start
         )

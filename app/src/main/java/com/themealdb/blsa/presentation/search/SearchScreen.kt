@@ -27,7 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.themealdb.blsa.R
 import com.themealdb.blsa.presentation.NavActions
 import com.themealdb.blsa.presentation.custom.Input
-import com.themealdb.blsa.presentation.custom.Label
 import com.themealdb.blsa.presentation.custom.Pic
 import com.themealdb.blsa.presentation.custom.StyleGuide
 import com.themealdb.blsa.presentation.mainList.ErrorView
@@ -68,7 +67,7 @@ fun SearchScreen(
                     searchStr = it
                     if (it.isNotEmpty())
                         viewModel.getMealListFlowData(searchStr)
-                },isFocus = true){
+                },isFocus = searchStr.isEmpty()){
                 viewModel.hideInputKeyboard(navActions.getContext())
             }
         }
@@ -78,7 +77,7 @@ fun SearchScreen(
 
         if(searchStr.isNotEmpty()) {
             when (requestMealList.status) {
-                Status.SUCCESS -> SuccessView(mealList = requestMealList.data!!, navActions)
+                Status.SUCCESS -> SuccessView(mealList = requestMealList.data!!, navActions,viewModel)
                 Status.LOADING -> LoadingView()
                 Status.ERROR -> ErrorView(strError = requestMealList.message ?: "") {
                     viewModel.getMealListFlowData(searchStr)

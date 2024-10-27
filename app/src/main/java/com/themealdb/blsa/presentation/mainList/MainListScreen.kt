@@ -17,7 +17,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.themealdb.blsa.R
+import com.themealdb.blsa.data.local.SharedInterface
 import com.themealdb.blsa.domain.model.MealItem
 import com.themealdb.blsa.domain.model.MealListResult
 import com.themealdb.blsa.presentation.NavActions
@@ -82,7 +86,7 @@ fun MainListScreen(
         val requestMealList = viewModel.mealListFlowData.collectAsState().value
 
         when (requestMealList.status) {
-            Status.SUCCESS -> SuccessView(mealList = requestMealList.data!!, navActions)
+            Status.SUCCESS -> SuccessView(mealList = requestMealList.data!!, navActions,viewModel)
             Status.LOADING -> LoadingView()
             Status.ERROR -> ErrorView(strError = requestMealList.message ?: ""){
                 viewModel.getMealListFlowData()
@@ -102,14 +106,14 @@ fun MainListScreen(
  */
 
 @Composable
-fun SuccessView(mealList: MealListResult, navActions: NavActions){
+fun SuccessView(mealList: MealListResult, navActions: NavActions,sharedInterface: SharedInterface){
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(0.dp, 0.dp, 0.dp, dimensionResource(id = R.dimen._100sdp) ),content = {
             items(mealList.meals!!.size) {
-                MealItemView(item = mealList.meals!![it],navActions)
+                MealItemView(item = mealList.meals!![it],navActions,sharedInterface)
             }
         })
 }
@@ -121,7 +125,7 @@ fun SuccessView(mealList: MealListResult, navActions: NavActions){
  */
 
 @Composable
-fun MealItemView(item: MealItem, navActions: NavActions)
+fun MealItemView(item: MealItem, navActions: NavActions,sharedInterface: SharedInterface)
 {
     SpecialtyViews.CardViewWrap(dpBasePadding = StyleGuide.sdp4()){
         Row(
@@ -148,15 +152,30 @@ fun MealItemView(item: MealItem, navActions: NavActions)
             )
 
             Column(modifier = Modifier.padding(StyleGuide.sdp5())) {
-                Label.TextBold(
-                    strContent = item.strMeal,
-                    resSize = R.dimen._12sdp,
-                    resTextColor = R.color.colorB,
-                    resPaddingH = R.dimen._5sdp,
-                    resPaddingV = R.dimen._1sdp,
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween){
+                    Label.TextBold(
+                        strContent = item.strMeal,
+                        resSize = R.dimen._12sdp,
+                        resTextColor = R.color.colorB,
+                        resPaddingH = R.dimen._5sdp,
+                        resPaddingV = R.dimen._1sdp,
+                        textAlign = TextAlign.Start
+                    )
+
+                    var isFav:Boolean by remember { mutableStateOf(sharedInterface.searchString(item.idMeal)) }
+
+                    Pic.IconClickable(
+                        resIcon = if(isFav)R.drawable.ic_star_fill else R.drawable.ic_star_nofill,
+                        Modifier.size(StyleGuide.sdp15())){
+                        if (isFav)
+                            sharedInterface.removeString(item.idMeal)
+                        else
+                            sharedInterface.addString(item.idMeal)
+                        isFav = !isFav
+                    }
+                }
 
                 Row(Modifier.fillMaxWidth()) {
                     Label.TextBold(
