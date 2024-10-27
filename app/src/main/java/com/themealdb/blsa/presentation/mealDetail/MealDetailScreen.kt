@@ -38,7 +38,7 @@ fun MealDetailScreen(navActions: NavActions,
         viewModel.getMealDetail(mealId)
     }
 
-    Column{
+    Column(Modifier.background(colorResource(R.color.white))){
         val item = viewModel.mealListFlowData.collectAsState().value
 
         SpecialtyViews.Header(item.strMeal, sharedInterface =  viewModel, mealId = mealId){

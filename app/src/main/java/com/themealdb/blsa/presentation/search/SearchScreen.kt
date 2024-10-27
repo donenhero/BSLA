@@ -41,7 +41,7 @@ fun SearchScreen(
 )
 {
     Column(
-        Modifier.fillMaxSize().background(Color.White),
+        Modifier.fillMaxSize().background(colorResource(R.color.white)),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         var searchStr by rememberSaveable { mutableStateOf("") }

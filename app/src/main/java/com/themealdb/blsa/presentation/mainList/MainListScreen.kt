@@ -57,7 +57,7 @@ fun MainListScreen(
 )
 {
     Column(
-        Modifier.background(Color.White),
+        Modifier.background(colorResource(R.color.white)),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
 
